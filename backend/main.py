@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Two-Tier API")
 
-# Allow frontend to call backend (we will tighten this later)
+# Allow frontend to call backend (tighten later)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -11,6 +11,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+def root():
+    return {"status": "ok"}
 
 @app.get("/health")
 def health():
