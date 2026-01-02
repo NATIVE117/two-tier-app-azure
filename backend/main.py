@@ -14,7 +14,7 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return {"status": "ok"}
+    return {"status": "ok", "service": "backend"}
 
 @app.get("/health")
 def health():
@@ -22,6 +22,4 @@ def health():
 
 @app.get("/message")
 def message():
-    return {
-        "message": "Hello from the backend API (Docker on Azure App Service)."
-    }
+    return {"message": "Hello from the backend API (Docker on Azure App Service)."}
