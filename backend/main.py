@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 import logging
 import sys
+import uuid
 
 logger = logging.getLogger("app")
 logger.setLevel(logging.INFO)
@@ -19,6 +20,13 @@ if not logger.handlers:
 
 app = FastAPI(title="Two-Tier API")
 
+@app.middleware("http")
+async def add_request_id(request: Request, call_next):
+    request_id = request.headers.get("x-request-id", str(uuid.uuid4()))
+    response = await call_next(request)
+    response.headers["x-request-id"] = request_id
+    return response
+
 # Allow frontend to call backend (tighten later)
 app.add_middleware(
     CORSMiddleware,
@@ -29,8 +37,11 @@ app.add_middleware(
 )
 
 @app.get("/")
-def root():
-    logger.info("root endpoint hit")
+async def root(request: Request):
+    logger.info(
+        f"request_id={request.headers.get('x-request-id','')} "
+        f"path={request.url.path} method={request.method} root endpoint hit"
+    )
     return {"message": "ok"}
 
 @app.get("/health")
@@ -38,6 +49,9 @@ def health():
     return {"status": "ok"}
 
 @app.get("/message")
-def message():
-    logger.info("message endpoint hit")
+async def message(request: Request):
+    logger.info(
+        f"request_id={request.headers.get('x-request-id','')} "
+        f"path={request.url.path} method={request.method} message endpoint hit"
+    )
     return {"message": "Hello from the backend API (Docker on Azure App Service)."}
