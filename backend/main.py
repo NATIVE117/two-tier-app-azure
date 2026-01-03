@@ -39,4 +39,5 @@ def health():
 
 @app.get("/message")
 def message():
+    logger.info("message endpoint hit")
     return {"message": "Hello from the backend API (Docker on Azure App Service)."}
