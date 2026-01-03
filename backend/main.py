@@ -54,8 +54,6 @@ def health():
 
 @app.get("/message")
 async def message(request: Request):
-    logger.info(
-        f"request_id={request.state.request_id} "
-        f"path={request.url.path} method={request.method} message endpoint hit"
-    )
-    return {"message": "Hello from the backend API (Docker on Azure App Service)."}
+   logger.info(
+    f"request_id={request.state.request_id} path={request.url.path} method={request.method} message endpoint hit"
+)
