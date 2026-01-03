@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 import sys
 import uuid
+from starlette.middleware.base import BaseHTTPMiddleware
 
 logger = logging.getLogger("app")
 logger.setLevel(logging.INFO)
@@ -27,6 +28,8 @@ async def add_request_id(request: Request, call_next):
     response = await call_next(request)
     response.headers["x-request-id"] = request_id
     return response
+
+app.add_middleware(RequestIDMiddleware)
 
 # Allow frontend to call backend (tighten later)
 app.add_middleware(
