@@ -22,7 +22,8 @@ app = FastAPI(title="Two-Tier API")
 
 @app.middleware("http")
 async def add_request_id(request: Request, call_next):
-    request_id = request.headers.get("x-request-id", str(uuid.uuid4()))
+    request_id = request.headers.get("x-request-id") or str(uuid.uuid4())
+    request.state.request_id = request_id
     response = await call_next(request)
     response.headers["x-request-id"] = request_id
     return response
@@ -51,7 +52,7 @@ def health():
 @app.get("/message")
 async def message(request: Request):
     logger.info(
-        f"request_id={request.headers.get('x-request-id','')} "
+        f"request_id={request.state.request_id} "
         f"path={request.url.path} method={request.method} message endpoint hit"
     )
     return {"message": "Hello from the backend API (Docker on Azure App Service)."}
